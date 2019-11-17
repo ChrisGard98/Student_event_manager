@@ -132,7 +132,7 @@ def event_comments(id):
     Delete a university from the database
     """
 
-    comments = Comments.query.all()
+    comments = Comments.query.filter(Comments.event_id==id)
 
     # redirect to the universities page
 
