@@ -3,6 +3,7 @@ from wtforms import StringField, SubmitField, DateTimeField
 from wtforms.validators import DataRequired
 from wtforms.ext.sqlalchemy.fields import QuerySelectField
 from wtforms.fields.html5 import DateField
+from wtforms_components import TimeField
 
 
 from ..models import Events
@@ -15,7 +16,7 @@ class EventForm(FlaskForm):
     name = StringField('Name', validators=[DataRequired()])
     description = StringField('Description', validators=[DataRequired()])
     date = DateField('Date', validators=[DataRequired()], format='%Y-%m-%d')
-    time = DateTimeField('Time(H:M)', validators=[DataRequired()], format='%H:%M')
+    time = TimeField('Time(H:M)', validators=[DataRequired()], format='%H:%M')
     location = StringField('Location', validators=[DataRequired()])
     submit = SubmitField('Submit')
 
