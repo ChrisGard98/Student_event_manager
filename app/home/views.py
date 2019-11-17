@@ -2,8 +2,8 @@ from flask import abort, flash, redirect, render_template, url_for
 from flask_login import current_user, login_required
 
 from . import home
-from ..models import Events
-from .forms import EventForm
+from ..models import Events, Comments
+from .forms import EventForm, CommentForm
 from .. import db
 
 
@@ -124,3 +124,90 @@ def delete_event(id):
     return redirect(url_for('home.list_events'))
 
     return render_template(title="Delete Event")
+
+@home.route('/events/<int:id>/comments/', methods=['GET', 'POST'])
+@login_required
+def event_comments(id):
+    """
+    Delete a university from the database
+    """
+
+    comments = Comments.query.all()
+
+    # redirect to the universities page
+
+    return render_template('home/events/comments.html',
+                           comments=comments, event_id=id, title="Comments")
+
+@home.route('/events/<int:eventid>/comments/add', methods=['GET', 'POST'])
+@login_required
+def add_comment(eventid):
+    """
+    Add a event to the database
+    """
+
+    add_comment = True
+
+    form = CommentForm()
+    if form.validate_on_submit():
+        comment = Comments(comment=form.comment.data,
+                                rating=form.rating.data, event_id=eventid)
+        try:
+            # add university to the database
+            db.session.add(comment)
+            db.session.commit()
+            flash('You have successfully added a new comment.')
+        except:
+            # in case university name already exists
+            flash('Error: comment name already exists.')
+
+        # redirect to universities page
+        return redirect(url_for('home.event_comments', id=eventid))
+
+    # load university template
+    return render_template('home/events/comment.html', action="Add",
+                           add_comment=add_comment, form=form,
+                           title="Add Comment")
+
+@home.route('/events/<int:eventid>/comments/edit/<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit_comment(id, eventid):
+    """
+    Edit a university
+    """
+
+    add_comment = False
+
+    comment = Comments.query.get_or_404(id)
+    form = CommentForm(obj=comment)
+    if form.validate_on_submit():
+        comment.comment = form.comment.data
+        comment.rating = form.rating.data
+        db.session.commit()
+        flash('You have successfully edited the comment.')
+
+        # redirect to the universities page
+        return redirect(url_for('home.event_comments', id=eventid))
+
+    form.rating.data = comment.rating
+    form.comment.data = comment.comment
+    return render_template('home/events/comment.html', action="Edit",
+                           add_comment=add_comment, form=form,
+                           comment=comment, title="Edit Comment")
+
+@home.route('/events/<int:eventid>/comments/delete/<int:id>', methods=['GET', 'POST'])
+@login_required
+def delete_comment(id, eventid):
+    """
+    Delete a university from the database
+    """
+
+    comment = Comments.query.get_or_404(id)
+    db.session.delete(comment)
+    db.session.commit()
+    flash('You have successfully deleted the comment.')
+
+    # redirect to the universities page
+    return redirect(url_for('home.event_comments', id=eventid))
+
+    return render_template(title="Delete Comment")

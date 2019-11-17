@@ -97,8 +97,47 @@ class Events(db.Model):
     date = db.Column(db.String(20))
     time = db.Column(db.String(20))
     location = db.Column(db.String(40))
+    university_id = db.Column(db.Integer, db.ForeignKey('universities.id'))
+    eventtype_id = db.Column(db.Integer, db.ForeignKey('eventtype.id'))
+    comment_id = db.Column(db.Integer, db.ForeignKey('comments.id'))
     students = db.relationship('Student', backref='events',
                                 lazy='dynamic')
 
     def __repr__(self):
         return '<Event: {}>'.format(self.name)
+
+class Rso(db.Model):
+    """
+    Create RSO table
+    """
+    __tablename__ = 'rso'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(60), unique=True)
+    description = db.Column(db.String(200))
+    university_id = db.Column(db.Integer, db.ForeignKey('universities.id'))
+    def __repr__(self):
+        return '<Rso: {}>'.format(self.name)
+
+class Comments(db.Model):
+    """
+    Create Comments table
+    """
+    __tablename__ = 'comments'
+    id = db.Column(db.Integer, primary_key=True)
+    student_id = db.Column(db.Integer, db.ForeignKey('students.id'))
+    event_id = db.Column(db.Integer, db.ForeignKey('events.id'))
+    comment = db.Column(db.String(200))
+    rating = db.Column(db.Integer)
+    timestamp = db.Column(db.Date)
+    def __repr__(self):
+        return '<Comments: {}>'.format(self.name)
+
+class EventType(db.Model):
+    """
+    Create a Role table
+    """
+    __tablename__ = 'eventtype'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(60), unique=True)
+    def __repr__(self):
+        return '<Eventtype: {}>'.format(self.name)
