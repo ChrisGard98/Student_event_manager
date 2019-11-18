@@ -2,8 +2,8 @@ from flask import abort, flash, redirect, render_template, url_for
 from flask_login import current_user, login_required
 
 from . import home
-from ..models import Events, Comments
-from .forms import EventForm, CommentForm
+from ..models import Events, Comments, University, Rso
+from .forms import EventForm, CommentForm, RsoForm
 from .. import db
 
 
@@ -211,3 +211,94 @@ def delete_comment(id, eventid):
     return redirect(url_for('home.event_comments', id=eventid))
 
     return render_template(title="Delete Comment")
+
+
+@home.route('/rsos', methods=['GET', 'POST'])
+@login_required
+def list_rsos():
+    """
+    List all rsos
+    """
+
+    print("hi")
+
+    rsos = Rso.query.all()
+
+    return render_template('home/rsos/rsos.html',
+                           rsos=rsos, title="Rsos")
+
+@home.route('/rsos/add', methods=['GET', 'POST'])
+@login_required
+def add_rso():
+    """
+    Add a rso to the database
+    """
+
+    add_rso = True
+
+    form = RsoForm()
+    if form.validate_on_submit():
+        uname = form.university.data
+        uid = db.select([University.id]).where(University.name.in_([str(uname)]))
+        rso = Rso(name=form.name.data,
+                                description=form.description.data,university_id=uid)
+        try:
+            # add university to the database
+            db.session.add(rso)
+            db.session.commit()
+            flash('You have successfully added a new rso.')
+        except ValueError as e:
+            print(e)
+            # in case university name already exists
+            flash('Error: rso name already exists.')
+
+        # redirect to universities page
+        return redirect(url_for('home.list_rsos'))
+
+    # load university template
+    return render_template('home/rsos/rso.html', action="Add",
+                           add_rso=add_rso, form=form,
+                           title="Add Rso")
+
+@home.route('/rsos/edit/<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit_rso(id):
+    """
+    Edit a university
+    """
+
+    add_rso = False
+
+    rso = Rso.query.get_or_404(id)
+    form = RsoForm(obj=rso)
+    if form.validate_on_submit():
+        rso.name = form.name.data
+        rso.description = form.description.data
+        db.session.commit()
+        flash('You have successfully edited the rso.')
+
+        # redirect to the universities page
+        return redirect(url_for('home.list_rsos'))
+
+    form.description.data = rso.description
+    form.name.data = rso.name
+    return render_template('home/rsos/rso.html', action="Edit",
+                           add_rso=add_rso, form=form,
+                           even=rso, title="Edit Rso")
+                                                   
+@home.route('/rsos/delete/<int:id>', methods=['GET', 'POST'])
+@login_required
+def delete_rso(id):
+    """
+    Delete a university from the database
+    """
+
+    rso = Rso.query.get_or_404(id)
+    db.session.delete(rso)
+    db.session.commit()
+    flash('You have successfully deleted the rso.')
+
+    # redirect to the universities page
+    return redirect(url_for('home.list_rsos'))
+
+    return render_template(title="Delete Rso")
