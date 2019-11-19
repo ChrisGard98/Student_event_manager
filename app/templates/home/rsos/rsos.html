@@ -17,8 +17,10 @@ title %}Rsos{% endblock %} {% block body %}
                 <th width="15%">Name</th>
                 <th width="40%">Description</th>
                 <th width="15%">University</th>
+                {% if current_user.is_admin %}
                 <th width="15%">Edit</th>
                 <th width="15%">Delete</th>
+                {% endif %}
               </tr>
             </thead>
             <tbody>
@@ -27,10 +29,7 @@ title %}Rsos{% endblock %} {% block body %}
                 <td>{{ rso.name }}</td>
                 <td>{{ rso.description }}</td>
                 <td>{{ rso.university }}</td>
-                <td>
-                  {% if rso.students %} {{ rso.students.count() }} {% else %} 0
-                  {% endif %}
-                </td>
+                {% if current_user.is_admin %}
                 <td>
                   <a href="{{ url_for('home.edit_rso', id=rso.id) }}">
                     <i class="fa fa-pencil"></i> Edit
@@ -41,6 +40,7 @@ title %}Rsos{% endblock %} {% block body %}
                     <i class="fa fa-trash"></i> Delete
                   </a>
                 </td>
+                {% endif %}
               </tr>
               {% endfor %}
             </tbody>
