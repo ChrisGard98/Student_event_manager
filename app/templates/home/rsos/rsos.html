@@ -51,7 +51,7 @@ title %}Rsos{% endblock %} {% block body %}
           <div style="text-align: center">
             <h3>No Rsos have been added.</h3>
             <hr class="intro-divider" />
-            {% endif %}
+            {% endif %} {% if current_user.is_admin %}
             <a
               href="{{ url_for('home.add_rso') }}"
               class="btn btn-default btn-lg"
@@ -59,6 +59,7 @@ title %}Rsos{% endblock %} {% block body %}
               <i class="fa fa-plus"></i>
               Add Rsos
             </a>
+            {% endif %}
           </div>
         </div>
       </div>

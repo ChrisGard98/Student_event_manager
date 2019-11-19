@@ -16,9 +16,11 @@ title %}Universities{% endblock %} {% block body %}
               <tr>
                 <th width="15%">Name</th>
                 <th width="40%">Description</th>
+                {% if current_user.is_admin %}
                 <th width="15%">Student Count</th>
                 <th width="15%">Edit</th>
                 <th width="15%">Delete</th>
+                {% endif %}
               </tr>
             </thead>
             <tbody>
@@ -26,9 +28,9 @@ title %}Universities{% endblock %} {% block body %}
               <tr>
                 <td>{{ university.name }}</td>
                 <td>{{ university.description }}</td>
+                {% if current_user.is_admin %}
                 <td>
-                  {% if university.students %}
-                  {{ university.students.count() }}
+                  {% if university.students %} {{ university.students.count() }}
                   {% else %} 0 {% endif %}
                 </td>
                 <td>
@@ -45,6 +47,7 @@ title %}Universities{% endblock %} {% block body %}
                     <i class="fa fa-trash"></i> Delete
                   </a>
                 </td>
+                {% endif %}
               </tr>
               {% endfor %}
             </tbody>
@@ -55,7 +58,7 @@ title %}Universities{% endblock %} {% block body %}
           <div style="text-align: center">
             <h3>No Universities have been added.</h3>
             <hr class="intro-divider" />
-            {% endif %}
+            {% endif %} {% if current_user.is_admin %}
             <a
               href="{{ url_for('admin.add_university') }}"
               class="btn btn-default btn-lg"
@@ -63,6 +66,7 @@ title %}Universities{% endblock %} {% block body %}
               <i class="fa fa-plus"></i>
               Add Universities
             </a>
+            {% endif %}
           </div>
         </div>
       </div>

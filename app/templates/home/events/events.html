@@ -20,13 +20,16 @@ title %}Events{% endblock %} {% block body %}
                 <th width="15%">Time</th>
                 <th width="15%">Location</th>
                 <th width="15%">Student Count</th>
+                {% if current_user.is_admin %}
                 <th width="15%">Edit</th>
                 <th width="15%">Delete</th>
+                {% endif %}
                 <th width="15%">Comments</th>
               </tr>
             </thead>
             <tbody>
-              {% for event in events %}
+              {% for event in events %} {% if event.event_type == "Public" or
+              current_user.is_admin %}
               <tr>
                 <td>{{ event.name }}</td>
                 <td>{{ event.description }}</td>
@@ -37,6 +40,7 @@ title %}Events{% endblock %} {% block body %}
                   {% if event.students %} {{ event.students.count() }} {% else
                   %} 0 {% endif %}
                 </td>
+                {% if current_user.is_admin %}
                 <td>
                   <a href="{{ url_for('home.edit_event', id=event.id) }}">
                     <i class="fa fa-pencil"></i> Edit
@@ -47,13 +51,14 @@ title %}Events{% endblock %} {% block body %}
                     <i class="fa fa-trash"></i> Delete
                   </a>
                 </td>
+                {% endif %}
                 <td>
                   <a href="{{ url_for('home.event_comments', id=event.id) }}">
                     <i class="fa fa-comment"></i> Comments
                   </a>
                 </td>
               </tr>
-              {% endfor %}
+              {% endif %} {% endfor %}
             </tbody>
           </table>
         </div>
@@ -62,7 +67,8 @@ title %}Events{% endblock %} {% block body %}
           <div style="text-align: center">
             <h3>No Events have been added.</h3>
             <hr class="intro-divider" />
-            {% endif %}
+            {% endif %} {% if current_user.is_authenticated %} {% if
+            current_user.is_admin %}
             <a
               href="{{ url_for('home.add_event') }}"
               class="btn btn-default btn-lg"
@@ -70,6 +76,7 @@ title %}Events{% endblock %} {% block body %}
               <i class="fa fa-plus"></i>
               Add Events
             </a>
+            {% endif %} {% endif %}
           </div>
         </div>
       </div>

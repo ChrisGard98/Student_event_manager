@@ -24,7 +24,7 @@ def list_universities():
     """
     List all universities
     """
-    check_admin()
+    #check_admin()
 
     
 

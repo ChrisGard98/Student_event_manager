@@ -63,7 +63,7 @@ def add_event():
     form = EventForm()
     if form.validate_on_submit():
         event = Events(name=form.name.data,
-                                description=form.description.data, date=form.date.data, time=form.time.data, location=form.location.data)
+                                description=form.description.data, date=form.date.data, time=form.time.data, location=form.location.data, event_type=form.event_type.data)
         try:
             # add university to the database
             db.session.add(event)

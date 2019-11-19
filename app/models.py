@@ -100,6 +100,7 @@ class Events(db.Model):
     university_id = db.Column(db.Integer, db.ForeignKey('universities.id'))
     eventtype_id = db.Column(db.Integer, db.ForeignKey('eventtype.id'))
     comment_id = db.Column(db.Integer, db.ForeignKey('comments.id'))
+    event_type = db.Column(db.String(20))
     students = db.relationship('Student', backref='events',
                                 lazy='dynamic')
 
