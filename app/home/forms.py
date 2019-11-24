@@ -19,6 +19,8 @@ class EventForm(FlaskForm):
     time = TimeField('Time(H:M)', validators=[DataRequired()], format='%H:%M')
     location = StringField('Location', validators=[DataRequired()])
     event_type = SelectField(u'Type', choices=[('Public', 'Public'), ('Private', 'Private'), ('RSO', 'RSO') ])
+    university = QuerySelectField(query_factory=lambda: University.query.all(),
+                                  get_label="name")
     submit = SubmitField('Submit')
 
 class CommentForm(FlaskForm):

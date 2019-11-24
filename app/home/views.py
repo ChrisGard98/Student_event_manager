@@ -64,6 +64,8 @@ def add_event():
     if form.validate_on_submit():
         event = Events(name=form.name.data,
                                 description=form.description.data, date=form.date.data, time=form.time.data, location=form.location.data, event_type=form.event_type.data)
+        event.univeristy = form.university.data
+
         try:
             # add university to the database
             db.session.add(event)
@@ -152,6 +154,7 @@ def add_comment(eventid):
     if form.validate_on_submit():
         comment = Comments(comment=form.comment.data,
                                 rating=form.rating.data, event_id=eventid)
+
         try:
             # add university to the database
             db.session.add(comment)
